@@ -502,7 +502,7 @@ const professionData = {
    BACKEND SAFETY API
 ========================= */
 
-const API_BASE_URL = "http://127.0.0.1:8000";
+const API_BASE_URL = "https://sih26076-mausam-1.onrender.com";
 
 const BACKEND_PROFILE_MAP = {
     "Student": "student_commute",
