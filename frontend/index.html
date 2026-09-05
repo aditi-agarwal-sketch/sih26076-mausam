@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Mausam — Personalized Homepage (Prototype)</title>
+<style>
+  body {
+    font-family: system-ui, sans-serif;
+    background: #0f172a;
+    color: #f1f5f9;
+    margin: 0;
+    padding: 24px;
+  }
+  h1 { font-size: 20px; margin-bottom: 4px; }
+  .subtitle { color: #94a3b8; font-size: 13px; margin-bottom: 20px; }
+  .personas {
+    font-size: 12px;
+    color: #38bdf8;
+    margin-bottom: 20px;
+  }
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 14px;
+  }
+  .card {
+    background: #1e293b;
+    border-radius: 14px;
+    padding: 16px;
+    border: 1px solid #334155;
+  }
+  .card .type {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #94a3b8;
+    margin-bottom: 6px;
+  }
+  .card .score {
+    font-size: 32px;
+    font-weight: 700;
+  }
+  .card .label {
+    font-size: 13px;
+    color: #38bdf8;
+    margin: 4px 0 8px;
+  }
+  .card .reason {
+    font-size: 13px;
+    color: #cbd5e1;
+    line-height: 1.4;
+  }
+  #status { font-size: 13px; color: #94a3b8; }
+</style>
+</head>
+<body>
+  <h1>Mausam — Personalized Homepage</h1>
+  <div class="subtitle">Prototype demo — SIH26076</div>
+  <div id="status">Loading...</div>
+  <div class="personas" id="personas"></div>
+  <div class="cards" id="cards"></div>
+
+<script>
+  // Point this at your running FastAPI backend (default: localhost:8000)
+  const API_BASE = "http://127.0.0.1:8000";
+  const DEMO_LAT = 28.6139;
+  const DEMO_LON = 77.2090;
+
+  async function loadHomepage() {
+    const statusEl = document.getElementById("status");
+    const cardsEl = document.getElementById("cards");
+    const personasEl = document.getElementById("personas");
+
+    try {
+      const res = await fetch(`${API_BASE}/homepage?lat=${DEMO_LAT}&lon=${DEMO_LON}`);
+      const data = await res.json();
+
+      statusEl.textContent = "";
+      personasEl.textContent = "Active context: " + (data.active_personas.join(", ") || "none detected");
+
+      cardsEl.innerHTML = "";
+      data.cards.forEach(card => {
+        const div = document.createElement("div");
+        div.className = "card";
+        div.innerHTML = `
+          <div class="type">${card.type.replaceAll("_", " ")}</div>
+          <div class="score">${card.score !== null ? card.score : ""}</div>
+          <div class="label">${card.label}</div>
+          <div class="reason">${card.reason}</div>
+        `;
+        cardsEl.appendChild(div);
+      });
+    }
+  }
+
+  loadHomepage();
+</script>
+</body>
+</html>
